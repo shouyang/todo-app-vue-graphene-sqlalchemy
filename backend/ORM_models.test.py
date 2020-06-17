@@ -80,5 +80,44 @@ class ORMTestCase(unittest.TestCase):
         results = session.query(Todo).filter_by(description="Third Todo")
         self.assertEqual(results.count(), 0)
 
+    def testTodoTag(self):
+        session = self.Session()
+        todo_local = Todo(description="Todo To be tagged")
+
+        tagA_local  = Tag(name="A")
+        tagB_local = Tag(name="B")
+
+        todo_local.tags = [tagA_local, tagB_local]
+        
+        session.add(todo_local)
+        session.commit()
+
+        results = session.query(Todo).filter_by(description="Todo To be tagged")
+        self.assertEqual(results.count(), 1)
+
+        todo_query = results.first()
+        self.assertEqual(todo_query.tags[0], tagA_local)
+        self.assertEqual(todo_query.tags[1], tagB_local)
+
+    def testTodoComment(self):
+        session = self.Session()
+        todo_local = Todo(description="Todo To be commented on")
+        comment_local = Comment(description="An independent comment")
+
+        todo_local.comments.append(comment_local)
+
+        session.add(todo_local)
+        session.commit()
+
+        results = session.query(Comment).filter_by(description="An independent comment")
+        self.assertEqual(results.count(), 1)
+
+        comment_query = results.first()
+
+        self.assertEqual(todo_local, comment_query.todo)
+
+
+
+
 if __name__ == "__main__":
     unittest.main()
