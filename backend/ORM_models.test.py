@@ -29,13 +29,15 @@ class ORMTestCase(unittest.TestCase):
             os.remove(TEST_DATABASE_FP)
 
     def testTodoCreate(self):
+        description = "Check that todos can be created, saved and loaded again"
+
         session = self.Session()
-        todo_local = Todo(description="First Todo")
+        todo_local = Todo(description=description)
 
         session.add(todo_local)        
         session.commit()
 
-        results = session.query(Todo).filter_by(description="First Todo")
+        results = session.query(Todo).filter_by(description=description)
         todo_query = results.first()
 
         self.assertEqual(results.count(), 1)
@@ -45,44 +47,49 @@ class ORMTestCase(unittest.TestCase):
         self.assertEqual(todo_local, todo_query)
     
     def testTodoUpdate(self):
+        description = "Check that todos can be edited, saved and loaded again"
+
         session = self.Session()
-        todo_local = Todo(description="Second Todo")
+        todo_local = Todo(description=description)
 
         session.add(todo_local)
         session.commit()
 
-        results = session.query(Todo).filter_by(description="Second Todo")
+        results = session.query(Todo).filter_by(description=description)
         todo_query = results.first()
 
-        todo_query.description = "Second Todo --Edited"
-        session.add(todo_query)
+        todo_query.description = description
         session.commit()
 
-        self.assertEqual(todo_local.description, "Second Todo --Edited")
+        self.assertEqual(todo_local.description, description)
         self.assertEqual(todo_local.description, todo_query.description)
         self.assertEqual(todo_local.id, todo_query.id)
         
         self.assertEqual(todo_local, todo_query)
 
     def testTodoDelete(self):
+        description = "Check that todos can be deleted"
+
         session = self.Session()
-        todo_local = Todo(description="Third Todo")
+        todo_local = Todo(description=description)
 
         session.add(todo_local)
         session.commit()
 
-        results = session.query(Todo).filter_by(description="Third Todo")
+        results = session.query(Todo).filter_by(description=description)
         self.assertEqual(results.count(), 1)
 
         session.delete(todo_local)
         session.commit()
 
-        results = session.query(Todo).filter_by(description="Third Todo")
+        results = session.query(Todo).filter_by(description=description)
         self.assertEqual(results.count(), 0)
 
     def testTodoTag(self):
+        description = "Check that todos can be tagged"
+
         session = self.Session()
-        todo_local = Todo(description="Todo To be tagged")
+        todo_local = Todo(description=description)
 
         tagA_local  = Tag(name="A")
         tagB_local = Tag(name="B")
@@ -92,16 +99,17 @@ class ORMTestCase(unittest.TestCase):
         session.add(todo_local)
         session.commit()
 
-        results = session.query(Todo).filter_by(description="Todo To be tagged")
+        results = session.query(Todo).filter_by(description=description)
         self.assertEqual(results.count(), 1)
 
         todo_query = results.first()
-        self.assertEqual(todo_query.tags[0], tagA_local)
-        self.assertEqual(todo_query.tags[1], tagB_local)
+        self.assertEqual(len(todo_query.tags), 2)
 
     def testTodoComment(self):
+        description = "Check that todos can be commented on"
+        
         session = self.Session()
-        todo_local = Todo(description="Todo To be commented on")
+        todo_local = Todo(description=description)
         comment_local = Comment(description="An independent comment")
 
         todo_local.comments.append(comment_local)
@@ -115,9 +123,6 @@ class ORMTestCase(unittest.TestCase):
         comment_query = results.first()
 
         self.assertEqual(todo_local, comment_query.todo)
-
-
-
 
 if __name__ == "__main__":
     unittest.main()
