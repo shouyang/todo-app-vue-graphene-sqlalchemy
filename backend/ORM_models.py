@@ -23,10 +23,12 @@ class Todo(Base):
 
     id = Column(Integer, primary_key=True)
     description = Column(Text, nullable=False)
-    done = Column(Enum, nullable=False, server_default=text("'false'"))
+    done = Column(Text, nullable=False, default="false")
     create_timestamp = Column(Text)
     edit_timestamp = Column(Text)
 
+    def __repr__(self):
+        return f"Todo(id={self.id}, description={self.description}, done={self.done}, create_timestamp={self.create_timestamp}, edit_timestap={self.edit_timestamp})"
 
 t_sqlite_sequence = Table(
     'sqlite_sequence', metadata,
