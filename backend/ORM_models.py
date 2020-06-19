@@ -28,7 +28,7 @@ class Todo(Base):
     edit_timestamp = Column(Text)
 
     def __repr__(self):
-        return f"Todo(id={self.id}, description={self.description}, done={self.done}, create_timestamp={self.create_timestamp}, edit_timestap={self.edit_timestamp})"
+        return f"Todo(id={self.id}, description={self.description}, done={self.done}, create_timestamp={self.create_timestamp}, edit_timestamp={self.edit_timestamp})"
 
 t_sqlite_sequence = Table(
     'sqlite_sequence', metadata,
