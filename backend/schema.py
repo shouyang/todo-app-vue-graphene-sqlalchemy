@@ -57,7 +57,6 @@ class CreateTodo(Mutation):
     def mutate(root, info, description):
         try:
             session = Session()
-            
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             todo = Todo_model(description=description, done="false", create_timestamp=now, edit_timestamp=now)
@@ -68,10 +67,29 @@ class CreateTodo(Mutation):
         except Exception as e:
             return CreateTodo(status=f"ERROR: {e}", result=None)
 
+class MarkTodoAsDone(Mutation):
+    class Arguments:
+        id = String(required=True)
+    
+    status = String()
+    result = Field(Todo)
+
+    def mutate(root, info, id):
+        try:
+            session = Session()
+            todo = session.query(Todo_model).filter_by(id=id).one_or_none()
+            todo.toggle_done()
+            session.commit()
+
+            return MarkTodoAsDone(status="OK", result=todo)
+
+        except Exception as e:
+            return CreateTodo(status=f"ERROR: {e}", result=None)
+
 
 class Mutations(ObjectType):
     create_todo = CreateTodo.Field()
-
+    mark_todo_as_done = MarkTodoAsDone.Field()
 if __name__ == "__main__":
     from flask import Flask
     from flask_graphql import GraphQLView

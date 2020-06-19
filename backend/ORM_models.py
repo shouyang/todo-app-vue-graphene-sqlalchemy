@@ -3,6 +3,7 @@ from sqlalchemy import Column, Enum, ForeignKey, Integer, Table, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import NullType
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -29,6 +30,10 @@ class Todo(Base):
 
     def __repr__(self):
         return f"Todo(id={self.id}, description={self.description}, done={self.done}, create_timestamp={self.create_timestamp}, edit_timestamp={self.edit_timestamp})"
+
+    def toggle_done(self):
+        self.done = "true" if self.done == "false" else "false"
+        self.edit_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 t_sqlite_sequence = Table(
     'sqlite_sequence', metadata,
